@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 58" role="img" aria-label="MASAR">
+  <rect width="180" height="58" rx="12" fill="#153e69"/>
+  <path d="M15 44 34 14l19 30h-9l-10-16-10 16z" fill="#f6c33d"/>
+  <path d="M34 35h31" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  <text x="69" y="39" font-family="Arial,sans-serif" font-weight="700" font-size="26" fill="#fff">MASAR</text>
+</svg>

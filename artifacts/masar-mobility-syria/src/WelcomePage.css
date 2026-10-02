@@ -1,0 +1,325 @@
+.masar-welcome {
+  --welcome-ink: #102d49;
+  --welcome-blue: #174b83;
+  --welcome-gold: #ffd344;
+  --welcome-paper: #f7f5ee;
+  --welcome-muted: #637487;
+  min-height: 100dvh;
+  background: var(--welcome-paper);
+  color: var(--welcome-ink);
+  font-family: var(--app-font-sans, 'DM Sans', sans-serif);
+  overflow: hidden;
+}
+
+.masar-welcome[dir="rtl"] {
+  font-family: var(--app-font-ar, 'Noto Sans Arabic', sans-serif);
+}
+
+.masar-welcome *,
+.masar-welcome *::before,
+.masar-welcome *::after { box-sizing: border-box; }
+
+.masar-welcome__shell {
+  min-height: 100dvh;
+  max-width: 1800px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(460px, .92fr);
+}
+
+.masar-welcome__story {
+  position: relative;
+  min-height: 100dvh;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(28px, 3.9vw, 60px);
+  background: #173b5c;
+  color: #fbf7ed;
+  overflow: hidden;
+}
+
+.masar-welcome__story { gap: 24px; justify-content: flex-start; }
+.masar-welcome__story-content { margin-block: auto; }
+.masar-welcome__story-footer { margin-top: auto; }
+.masar-welcome__photo {
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0c2742;
+  border-bottom: 3px solid var(--welcome-gold);
+  box-shadow: 0 18px 40px rgba(4, 18, 34, .4);
+  animation: masar-welcome-rise .75s both;
+}
+.masar-welcome__photo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+.masar-welcome__photo-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  color: #f9f7f0;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.masar-welcome__photo-label::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--welcome-gold);
+}
+
+.masar-welcome__story-content {
+  max-width: 640px;
+  animation: masar-welcome-rise .75s .08s both;
+}
+
+.masar-welcome__story-rule {
+  width: 54px;
+  height: 3px;
+  display: block;
+  margin-bottom: 24px;
+  background: var(--welcome-gold);
+}
+
+.masar-welcome__story h2 {
+  margin: 0;
+  max-width: 610px;
+  font-size: clamp(28px, 3vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -.055em;
+  font-weight: 700;
+}
+
+.masar-welcome[dir="rtl"] .masar-welcome__story h2 {
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+.masar-welcome__story p {
+  max-width: 490px;
+  margin: 22px 0 0;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.7;
+  color: rgba(250, 249, 243, .88);
+}
+
+.masar-welcome__story-footer {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding-top: 40px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(250, 249, 243, .75);
+}
+
+.masar-welcome__story-footer span {
+  display: block;
+  width: 27px;
+  height: 1px;
+  background: var(--welcome-gold);
+}
+
+.masar-welcome__entry {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(24px, 3vw, 46px) clamp(26px, 6vw, 98px) 27px;
+}
+
+.masar-welcome__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.masar-welcome__logo {
+  width: 58px;
+  height: 72px;
+  display: block;
+  object-fit: contain;
+}
+.masar-welcome__brand { display: inline-flex; align-items: center; gap: 10px; color: var(--welcome-blue); font-size: clamp(20px, 2vw, 26px); font-weight: 800; letter-spacing: .04em; white-space: nowrap; }
+
+.masar-welcome__header-note {
+  color: var(--welcome-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-align: end;
+  line-height: 1.5;
+}
+
+.masar-welcome__center {
+  width: min(100%, 460px);
+  margin: auto;
+  padding: 64px 0 50px;
+  animation: masar-welcome-rise .7s .16s both;
+}
+
+.masar-welcome__step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  color: var(--welcome-blue);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.masar-welcome__step-number {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border: 1px solid #b6c6d0;
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+.masar-welcome__center h1 {
+  margin: 0;
+  font-size: clamp(36px, 3.5vw, 54px);
+  line-height: 1.11;
+  letter-spacing: -.05em;
+  font-weight: 700;
+}
+
+.masar-welcome[dir="rtl"] .masar-welcome__center h1 {
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+.masar-welcome__intro {
+  margin: 16px 0 34px;
+  max-width: 420px;
+  color: var(--welcome-muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.masar-welcome__divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 20px;
+  color: #788897;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.masar-welcome__divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #dbe0dc;
+}
+
+.masar-welcome__actions { display: grid; gap: 11px; }
+.masar-welcome__action {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform .2s ease, background-color .2s ease, border-color .2s ease;
+}
+.masar-welcome__action:hover { transform: translateY(-2px); }
+.masar-welcome__action--primary { background: var(--welcome-blue); color: #fffdf6; }
+.masar-welcome__action--primary:hover { background: #103c6d; }
+.masar-welcome__action--secondary { background: #fdfcf8; border-color: #ccd7db; color: var(--welcome-blue); }
+.masar-welcome__action--secondary:hover { background: #eaf1f4; border-color: var(--welcome-blue); }
+.masar-welcome__action svg { width: 17px; height: 17px; }
+.masar-welcome[dir="rtl"] .masar-welcome__action svg { transform: rotate(180deg); }
+
+.masar-welcome__demo {
+  margin-top: 29px;
+  padding: 20px 21px;
+  border: 1px solid #d9dfd7;
+  border-radius: 16px;
+  background: #eeefe7;
+}
+.masar-welcome__demo-heading { display: flex; align-items: center; gap: 9px; color: var(--welcome-ink); font-size: 14px; font-weight: 700; }
+.masar-welcome__demo-heading svg { color: var(--welcome-blue); flex: none; }
+.masar-welcome__demo p { margin: 9px 0 12px; color: #526273; font-size: 12px; line-height: 1.65; }
+.masar-welcome__demo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--welcome-blue);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: #9aafbf;
+  text-underline-offset: 4px;
+}
+.masar-welcome__demo-link:hover { text-decoration-color: currentColor; }
+.masar-welcome__demo-link svg { width: 15px; height: 15px; }
+.masar-welcome[dir="rtl"] .masar-welcome__demo-link svg { transform: rotate(180deg); }
+.masar-welcome__legal {
+  margin: 0;
+  color: #788796;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.masar-welcome a:focus-visible,
+.masar-welcome button:focus-visible { outline: 3px solid #e3ac21; outline-offset: 3px; }
+
+@keyframes masar-welcome-rise {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes masar-welcome-image {
+  from { opacity: .65; transform: scale(1.08); }
+  to { opacity: 1; transform: scale(1.045); }
+}
+
+@media (max-width: 950px) {
+  .masar-welcome__shell { grid-template-columns: minmax(0, .85fr) minmax(400px, 1fr); }
+  .masar-welcome__entry { padding-inline: clamp(25px, 4vw, 50px); }
+  .masar-welcome__story h2 { font-size: clamp(26px, 3.4vw, 36px); }
+  .masar-welcome__story p { font-size: 14px; }
+}
+@media (max-width: 767px) {
+  .masar-welcome__shell { display: flex; flex-direction: column; }
+  .masar-welcome__story { order: 1; min-height: 0; padding: 22px 20px 26px; gap: 18px; }
+  .masar-welcome__story-content { margin-block: 0; }
+  .masar-welcome__story h2 { font-size: clamp(30px, 7vw, 45px); max-width: 480px; }
+  .masar-welcome__story p { font-size: 13px; margin-top: 9px; max-width: 390px; }
+  .masar-welcome__story-rule { margin-bottom: 12px; }
+  .masar-welcome__story-footer { display: none; }
+  .masar-welcome__entry { order: 2; padding: 27px 25px 25px; }
+  .masar-welcome__center { padding: 38px 0 32px; }
+  .masar-welcome__center h1 { font-size: clamp(34px, 8vw, 46px); }
+}
+@media (max-width: 390px) {
+  .masar-welcome__entry { padding-inline: 18px; }
+  .masar-welcome__header-note { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .masar-welcome__photo, .masar-welcome__story-content, .masar-welcome__center { animation: none; }
+  .masar-welcome__action { transition: none; }
+}

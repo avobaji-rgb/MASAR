@@ -1,0 +1,17 @@
+.account-questions { max-width: 760px; margin: 38px auto; padding: 30px; background: white; border: 1px solid hsl(var(--border)); border-radius: 22px; box-shadow: 0 16px 55px rgba(17,45,71,.06); color: hsl(var(--foreground)); }
+.account-questions-heading h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); margin: 8px 0; }
+.account-questions-heading p, .account-questions fieldset p { color: hsl(var(--muted-foreground)); line-height: 1.6; }
+.account-kicker { letter-spacing: .12em; text-transform: uppercase; font-size: .72rem; font-weight: 700; color: hsl(var(--primary)); }
+.account-progress { display: flex; gap: 8px; margin: 24px 0; }
+.account-progress span { height: 5px; flex: 1; background: hsl(var(--muted)); border-radius: 10px; }
+.account-progress span.active { background: hsl(var(--primary)); }
+.account-questions fieldset { border: 0; padding: 0; margin: 24px 0; }
+.account-questions legend { font-weight: 700; font-size: 1.18rem; }
+.account-field { display: flex; flex-direction: column; gap: 8px; margin: 18px 0; font-weight: 600; font-size: .9rem; }
+.account-field input { background: hsl(var(--background)); border: 1px solid hsl(var(--border)); border-radius: 10px; padding: 12px 14px; width: 100%; color: hsl(var(--foreground)); }
+.account-field input:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 2px; }
+.account-check { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
+.account-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.account-demo-notice { margin: 24px 0 0; padding: 14px; background: hsl(var(--muted)); border-radius: 10px; font-size: .85rem; line-height: 1.6; }
+.account-success { color: #146747; font-weight: 600; }
+@media (max-width: 600px) { .account-questions { margin: 16px; padding: 22px; } }

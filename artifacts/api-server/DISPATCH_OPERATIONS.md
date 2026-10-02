@@ -1,0 +1,20 @@
+# Dispatch operations
+
+The customer request endpoint stores a request as `pending` in PostgreSQL. It does **not** call a technician or reserve transport. A signed-in, authorized operator uses `/dispatch` in the MASAR web app; the queue refreshes every 10 seconds while that page is open. New pending requests are visible to all operators. Sending an offer is atomic: only one operator can offer a pending request. The selected, verified provider sees that request at `/provider`, which refreshes every 10 seconds. Their own signed-in acknowledgement moves the request to `accepted`. Only then may the operator progress the status. The driver's `/activity` page refreshes every 10 seconds.
+
+## Before offering this as a staffed service
+
+### Recovery and on-page alerts
+
+- The operator queue also shows active requests assigned to other operators. A verified operator can take over with a reason and confirmation. Taking over a confirmed service preserves its provider and status; it does not dispatch another provider.
+- An unanswered offer expires after five minutes and returns to pending when an authenticated customer, operator, or provider request checks expiry. This is poll-driven, not an unattended background scheduler. Changing operators does not restart the provider's response window.
+- Release and reoffer actions are explicitly confirmed and are limited to safe states. Coordinate any change with the real provider first. Recovery actions reject stale revisions instead of silently overwriting another operator's work.
+- Operators and providers can opt in to browser notifications. These, and the visible new-request indicator, require their page to remain open and connected. They are not offline push, SMS, or email; independently monitored staffing and escalation remain necessary.
+- Request details include the customer's account name/phone, vehicle make/plate, notes, safety flag, and towing destination. Treat these as sensitive service information. A browser telephone link opens the dialer; it does not place an automatic call.
+
+1. Recruit and verify real dispatch operators and providers. Arrange an independently monitored shift, an escalation path for unattended requests, and a means for an operator to contact a provider. This repository has **no** provider network or automatic push/SMS/email alert. An unstaffed queue cannot be sold as guaranteed assistance.
+2. Provision trusted Clerk accounts with **private metadata** `{"dispatchOperator": true}` for operators and `{"dispatchProvider": true}` for actual verified providers. Never use public/unsafe metadata or let customers set these flags. The application does not self-enroll either role. Revoke flags when staff leave.
+3. Have the provider sign in at `/provider` and share the displayed dispatch ID with the operator. Keep both pages open during a staffed shift. The operator enters this ID in `/dispatch` to offer the pending request. A request addressed to a provider is *not* confirmed until that provider accepts it in their own inbox. A decline returns it to the pending queue for reassignment.
+4. The operator updates **En route**, **Arrived**, and **Completed** only after verifying those real-world events. For Premium replacement transport, explicitly choose **Confirm transport** or **Transport unavailable** before completion. If the provider falls through, select **Service unavailable**. The driver sees the latest confirmed state and note. No estimated arrival or guaranteed replacement ride is implied.
+
+Customer-submitted locations are sensitive. The operator queue is restricted server-side to accounts bearing the operator private flag; a verified provider can only read requests addressed to their own Clerk ID. Operators and providers must not share account credentials. Customer request lists remain owner-scoped. An inbox delivery is not a push notification; staff must monitor the pages during a shift.

@@ -1,0 +1,32 @@
+// MASAR brand tokens, converted from artifacts/masar-mobility-syria/src/index.css
+const colors = {
+  light: {
+    text: '#16263A',
+    tint: '#0F4C99',
+    background: '#F8F5EE',
+    foreground: '#16263A',
+    card: '#FFFDF9',
+    cardForeground: '#16263A',
+    primary: '#0F4C99',
+    primaryForeground: '#FFFBEF',
+    secondary: '#FFC21A',
+    secondaryForeground: '#16263A',
+    muted: '#F0ECE0',
+    mutedForeground: '#5E7089',
+    accent: '#E3F0F7',
+    accentForeground: '#0B3A78',
+    destructive: '#C7362D',
+    destructiveForeground: '#FFFDF9',
+    border: '#E4E0D3',
+    input: '#D6D1BF',
+    navyDeep: '#0B2F5E',
+    gold: '#FFC21A',
+    goldSoft: '#FFF4D6',
+    goldInk: '#7A5200',
+    success: '#2E7D5B',
+    successSoft: '#E1F2E9',
+    dangerSoft: '#FBE7E5',
+  },
+  radius: 16,
+};
+export default colors;

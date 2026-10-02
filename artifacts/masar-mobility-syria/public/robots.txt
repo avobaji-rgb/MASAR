@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://masar-mobility-syria.replit.app/sitemap.xml

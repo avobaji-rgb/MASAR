@@ -1,0 +1,10 @@
+.vehicle-details-fields { display: grid; gap: 14px; margin: 18px 0; }
+.vehicle-details-field { display: flex; flex-direction: column; gap: 7px; font-size: .9rem; font-weight: 600; }
+.vehicle-details-field select,
+.vehicle-details-field input { width: 100%; min-height: 48px; padding: 11px 14px; border: 1px solid hsl(var(--input)); border-radius: 11px; background: hsl(var(--background)); color: hsl(var(--foreground)); font: inherit; font-weight: 500; }
+.vehicle-details-field select { cursor: pointer; }
+.vehicle-details-field select:disabled { opacity: .58; cursor: not-allowed; }
+.vehicle-details-field input::placeholder { color: hsl(var(--muted-foreground)); }
+.vehicle-details-field small { color: hsl(var(--muted-foreground)); font-size: .78rem; line-height: 1.5; font-weight: 400; }
+.vehicle-details-field select:focus-visible,
+.vehicle-details-field input:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 2px; }

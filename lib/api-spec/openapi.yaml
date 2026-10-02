@@ -1,0 +1,1219 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: assistant
+    description: MASAR demo assistant
+  - name: profile
+    description: Authenticated MASAR driver profile
+  - name: membership
+    description: Membership and authenticated roadside assistance dispatch
+  - name: partners
+    description: Partner company, job, device, upload, and administration operations
+paths:
+  /partners/me:
+    get:
+      operationId: getPartnerIdentity
+      tags: [partners]
+      responses:
+        "200":
+          description: Current user's partner identity and memberships
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerIdentity" }
+        "401": { description: Sign in required }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/companies:
+    post:
+      operationId: registerPartnerCompany
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerCompanyInput" }
+      responses:
+        "201":
+          description: Partner company submitted for review
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerCompany" }
+        "400": { description: Invalid company details }
+        "401": { description: Sign in required }
+        "409": { description: Company registration conflicts with an existing record }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/companies/{companyId}:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getPartnerCompany
+      tags: [partners]
+      responses:
+        "200":
+          description: Partner company details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerCompany" }
+        "401": { description: Sign in required }
+        "403": { description: Company access required }
+        "404": { description: Company not found }
+        "503": { description: Partner service temporarily unavailable }
+    patch:
+      operationId: updatePartnerCompany
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerCompanyInput" }
+      responses:
+        "200":
+          description: Updated partner company
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerCompany" }
+        "400": { description: Invalid company details }
+        "401": { description: Sign in required }
+        "403": { description: Company management access required }
+        "404": { description: Company not found }
+        "409": { description: Company version conflict }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/companies/{companyId}/availability:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+    put:
+      operationId: setPartnerAvailability
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerAvailabilityInput" }
+      responses:
+        "200":
+          description: Updated partner availability
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerCompany" }
+        "401": { description: Sign in required }
+        "403": { description: Company access required }
+        "404": { description: Company not found }
+        "409": { description: Company version conflict }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/companies/{companyId}/members:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+    get:
+      operationId: listPartnerMembers
+      tags: [partners]
+      responses:
+        "200":
+          description: Partner company members
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PartnerMember" }
+        "401": { description: Sign in required }
+        "403": { description: Company management access required }
+        "404": { description: Company not found }
+        "503": { description: Partner service temporarily unavailable }
+    post:
+      operationId: addPartnerMember
+      tags: [partners]
+      description: Adds an existing, verified Clerk user to the company; this operation does not create or invite Clerk users.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerMemberInput" }
+      responses:
+        "201":
+          description: Added partner member
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerMember" }
+        "400": { description: Invalid member details }
+        "401": { description: Sign in required }
+        "403": { description: Company management access required }
+        "404": { description: Company or existing Clerk user not found }
+        "409": { description: User is already a company member }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/companies/{companyId}/members/{memberId}:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+      - in: path
+        name: memberId
+        required: true
+        schema: { type: string }
+    patch:
+      operationId: updatePartnerMember
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerMemberUpdate" }
+      responses:
+        "200":
+          description: Updated partner member
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerMember" }
+        "400": { description: Invalid member details }
+        "401": { description: Sign in required }
+        "403": { description: Company management access required }
+        "404": { description: Company or member not found }
+        "409": { description: Member change conflicts with current company state }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/companies/{companyId}/jobs:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+    get:
+      operationId: listPartnerJobs
+      tags: [partners]
+      responses:
+        "200":
+          description: Jobs offered to or assigned to the company
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PartnerJob" }
+        "401": { description: Sign in required }
+        "403": { description: Company access required }
+        "404": { description: Company not found }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/jobs/{jobId}:
+    parameters:
+      - in: path
+        name: jobId
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getPartnerJob
+      tags: [partners]
+      responses:
+        "200":
+          description: Partner job details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerJob" }
+        "401": { description: Sign in required }
+        "403": { description: Partner job access required }
+        "404": { description: Job not found }
+        "503": { description: Partner service temporarily unavailable }
+    patch:
+      operationId: updatePartnerJob
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerJobUpdate" }
+      responses:
+        "200":
+          description: Updated partner job
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerJob" }
+        "400": { description: Invalid job update or status transition }
+        "401": { description: Sign in required }
+        "403": { description: Partner job access required }
+        "404": { description: Job or worker not found }
+        "409": { description: Job version conflict or status changed }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/jobs/{jobId}/response:
+    parameters:
+      - in: path
+        name: jobId
+        required: true
+        schema: { type: string }
+    post:
+      operationId: respondPartnerOffer
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerOfferResponse" }
+      responses:
+        "200":
+          description: Partner offer accepted or declined
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerJob" }
+        "400": { description: Invalid offer decision }
+        "401": { description: Sign in required }
+        "403": { description: Partner job access required }
+        "404": { description: Job not found }
+        "409": { description: "Offer expired, already decided, or version conflict" }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/devices:
+    post:
+      operationId: registerPartnerDevice
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerDeviceInput" }
+      responses:
+        "200":
+          description: Partner device registered
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerDeviceResult" }
+        "400": { description: Invalid device details }
+        "401": { description: Sign in required }
+        "503": { description: Device service temporarily unavailable }
+    delete:
+      operationId: removePartnerDevice
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerDeviceRemoval" }
+      responses:
+        "200":
+          description: Partner device removed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerDeviceResult" }
+        "400": { description: Invalid device token }
+        "401": { description: Sign in required }
+        "503": { description: Device service temporarily unavailable }
+  /partners/admin/companies:
+    get:
+      operationId: listPartnerReviews
+      tags: [partners]
+      responses:
+        "200":
+          description: Partner companies awaiting or undergoing review
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PartnerCompany" }
+        "401": { description: Sign in required }
+        "403": { description: Partner administrator access required }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/admin/companies/{companyId}/review:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+    post:
+      operationId: reviewPartnerCompany
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerCompanyReview" }
+      responses:
+        "200":
+          description: Partner company review recorded
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerCompany" }
+        "400": { description: Invalid review decision }
+        "401": { description: Sign in required }
+        "403": { description: Partner administrator access required }
+        "404": { description: Company not found }
+        "409": { description: Company version conflict }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/admin/requests/{requestId}/eligible:
+    parameters:
+      - in: path
+        name: requestId
+        required: true
+        schema: { type: string }
+    get:
+      operationId: listEligiblePartnerCompanies
+      tags: [partners]
+      responses:
+        "200":
+          description: Approved companies eligible for the request
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PartnerCompany" }
+        "401": { description: Sign in required }
+        "403": { description: Partner administrator access required }
+        "404": { description: Request not found }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/admin/requests/{requestId}/offer:
+    parameters:
+      - in: path
+        name: requestId
+        required: true
+        schema: { type: string }
+    post:
+      operationId: offerPartnerJob
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerJobOffer" }
+      responses:
+        "201":
+          description: Partner job offer created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerJob" }
+        "400": { description: Invalid offer details }
+        "401": { description: Sign in required }
+        "403": { description: Partner administrator access required }
+        "404": { description: Request or company not found }
+        "409": { description: Request changed or is no longer eligible for an offer }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/admin/audit:
+    get:
+      operationId: listPartnerAudit
+      tags: [partners]
+      responses:
+        "200":
+          description: Partner administration audit events
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PartnerAudit" }
+        "401": { description: Sign in required }
+        "403": { description: Partner administrator access required }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/public:
+    get:
+      operationId: listPublicPartners
+      tags: [partners]
+      description: Returns public partner details only; the backend sanitizes private company fields.
+      responses:
+        "200":
+          description: Publicly listed approved partners
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PartnerCompany" }
+        "503": { description: Partner service temporarily unavailable }
+  /partners/companies/{companyId}/uploads:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+    post:
+      operationId: getPartnerUpload
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerUploadInput" }
+      responses:
+        "200":
+          description: Authorized upload URL and storage object path
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerUpload" }
+        "400": { description: Invalid upload metadata }
+        "401": { description: Sign in required }
+        "403": { description: Company upload access required }
+        "404": { description: Company not found }
+        "503": { description: Upload service temporarily unavailable }
+  /partners/companies/{companyId}/uploads/confirm:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+    post:
+      operationId: confirmPartnerUpload
+      tags: [partners]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PartnerUploadConfirmation" }
+      responses:
+        "200":
+          description: Company updated with the confirmed asset
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerCompany" }
+        "400": { description: Invalid or incomplete upload }
+        "401": { description: Sign in required }
+        "403": { description: Company upload access required }
+        "404": { description: Company or uploaded object not found }
+        "409": { description: Upload cannot be attached to this company }
+        "503": { description: Upload service temporarily unavailable }
+  /partners/companies/{companyId}/assets/{assetId}:
+    parameters:
+      - in: path
+        name: companyId
+        required: true
+        schema: { type: string }
+      - in: path
+        name: assetId
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getPartnerAsset
+      tags: [partners]
+      description: Returns an authorized retrieval URL, including for private company documents.
+      responses:
+        "200":
+          description: Authorized retrieval URL
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartnerAsset" }
+        "401": { description: Sign in required }
+        "403": { description: Asset access not authorized }
+        "404": { description: Company or asset not found }
+        "503": { description: Asset service temporarily unavailable }
+  /membership:
+    get:
+      operationId: getMembership
+      tags: [membership]
+      responses:
+        "200":
+          description: Verified subscription entitlement
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Membership" }
+        "401": { description: Sign in required }
+  /membership/manual-confirmation:
+    post:
+      operationId: confirmBankMembership
+      tags: [membership]
+      description: A verified dispatch operator confirms receipt of a bank payment. Never activated by the customer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BankMembershipConfirmation" }
+      responses:
+        "200":
+          description: Manually confirmed membership
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Membership" }
+        "400": { description: Invalid confirmation }
+        "401": { description: Sign in required }
+        "403": { description: Verified operator role required }
+        "404": { description: Customer not found }
+        "409": { description: Customer already has an active membership }
+  /vehicles:
+    get:
+      operationId: listRegisteredVehicles
+      tags: [membership]
+      responses:
+        "200":
+          description: Driver's registered vehicles
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/RegisteredVehicle" }
+        "401": { description: Sign in required }
+    post:
+      operationId: registerVehicle
+      tags: [membership]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VehicleInput" }
+      responses:
+        "201":
+          description: Registered vehicle
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RegisteredVehicle" }
+        "400": { description: Invalid vehicle }
+        "403": { description: Subscription or vehicle limit required }
+  /vehicles/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    put:
+      operationId: updateRegisteredVehicle
+      tags: [membership]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VehicleInput" }
+      responses:
+        "200":
+          description: Updated vehicle
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RegisteredVehicle" }
+        "403": { description: Subscription required }
+        "404": { description: Not found }
+    delete:
+      operationId: deleteRegisteredVehicle
+      tags: [membership]
+      responses:
+        "204": { description: Removed }
+        "404": { description: Not found }
+  /roadside-requests:
+    get:
+      operationId: listRoadsideRequests
+      tags: [membership]
+      responses:
+        "200":
+          description: Driver's recorded requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/RoadsideRequest" }
+        "401": { description: Sign in required }
+    post:
+      operationId: submitRoadsideRequest
+      tags: [membership]
+      description: Creates a roadside request from the signed-in driver's registered vehicle and saved account profile. Customer identity and vehicle snapshots are derived server-side. Repeated submissions with the same idempotencyKey for the same account return the original request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RoadsideRequestInput" }
+      responses:
+        "201":
+          description: Recorded request, not a dispatch guarantee (or the original request for an idempotent retry)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Active plan or premium benefit required }
+        "400": { description: Invalid request }
+        "409": { description: Idempotency key already used by another request }
+  /dispatch/requests:
+    get:
+      operationId: listDispatchRequests
+      tags: [membership]
+      responses:
+        "200":
+          description: Pending requests and all active assignments visible to verified dispatch operators; expires offers with no response after five minutes during authenticated polling
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Operator access required }
+  /dispatch/requests/{id}/takeover:
+    post:
+      operationId: takeoverDispatchRequest
+      tags: [membership]
+      description: Atomically assigns ownership to this verified operator without changing provider assignment or service status.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DispatchRecovery" }
+      responses:
+        "200":
+          description: Ownership changed; existing provider and status are preserved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Operator access required }
+        "409": { description: Request ownership or status changed }
+  /dispatch/requests/{id}/release:
+    post:
+      operationId: releaseDispatchRequest
+      tags: [membership]
+      description: Releases an unaccepted pending/offered assignment to the shared pending queue. Accepted service cannot be silently released.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DispatchRecovery" }
+      responses:
+        "200":
+          description: Assignment released to the pending queue
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Operator access required }
+        "409": { description: Request cannot be released in its current state }
+  /dispatch/requests/{id}/reoffer:
+    post:
+      operationId: reofferDispatchRequest
+      tags: [membership]
+      description: Replaces an unanswered provider offer. Only the assigned operator can reoffer; accepted service cannot be reassigned.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProviderReoffer" }
+      responses:
+        "200":
+          description: Offer moved to another verified provider
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Operator access required }
+        "409": { description: Request cannot be reoffered in its current state }
+  /dispatch/requests/{id}:
+    patch:
+      operationId: updateDispatchRequest
+      tags: [membership]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DispatchUpdate" }
+      responses:
+        "200":
+          description: Updated request
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Operator access required }
+        "409": { description: Request already claimed or invalid transition }
+  /dispatch/requests/{id}/offer:
+    post:
+      operationId: offerDispatchRequest
+      tags: [membership]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProviderOffer" }
+      responses:
+        "200":
+          description: Request delivered to the selected provider's inbox, awaiting acknowledgement
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Operator access required }
+        "409": { description: Request already offered or changed }
+  /provider/requests:
+    get:
+      operationId: listProviderRequests
+      tags: [membership]
+      responses:
+        "200":
+          description: Requests addressed to this verified provider; lazy polling expires unanswered offers after five minutes, with no background scheduler
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Provider access required }
+  /provider/requests/{id}/response:
+    post:
+      operationId: respondProviderRequest
+      tags: [membership]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProviderResponse" }
+      responses:
+        "200":
+          description: Provider acknowledged or declined offer
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RoadsideRequest" }
+        "403": { description: Provider access required }
+        "409": { description: Offer already decided }
+  /provider/me:
+    get:
+      operationId: getProviderIdentity
+      tags: [membership]
+      responses:
+        "200":
+          description: Verified provider's identifier for dispatch
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProviderIdentity" }
+        "403": { description: Provider access required }
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      summary: Read the current driver's profile
+      responses:
+        "200":
+          description: Current profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriverProfile"
+        "401":
+          description: Authentication required
+    put:
+      operationId: saveProfile
+      tags: [profile]
+      summary: Save the current driver's profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DriverProfileInput"
+      responses:
+        "200":
+          description: Saved profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriverProfile"
+        "400":
+          description: Invalid profile
+        "401":
+          description: Authentication required
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /assistant/chat:
+    post:
+      operationId: askAssistant
+      tags: [assistant]
+      summary: Ask the bilingual roadside assistance demo assistant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssistantInput"
+      responses:
+        "200":
+          description: Assistant answer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssistantAnswer"
+        "400":
+          description: Invalid input
+        "429":
+          description: Too many requests
+        "503":
+          description: AI assistant temporarily unavailable
+components:
+  schemas:
+    PartnerIdentity:
+      type: object
+      required: [userId, operator, companies, memberships]
+      properties:
+        userId: { type: string }
+        operator: { type: boolean }
+        companies:
+          type: array
+          items: { $ref: "#/components/schemas/PartnerCompany" }
+        memberships:
+          type: array
+          items: { $ref: "#/components/schemas/PartnerMember" }
+    PartnerCompany:
+      type: object
+      required: [id, ownerId, name, type, phone, contact, address, city, area, hours, services, logo, photos, documents, status, reviewReason, available, active, version, createdAt]
+      properties:
+        id: { type: string }
+        ownerId: { type: string }
+        name: { type: string }
+        type: { type: string, enum: [towing, garage, both] }
+        phone: { type: string }
+        contact: { type: string }
+        address: { type: string }
+        city: { type: string }
+        area: { type: string }
+        hours: { type: string }
+        services:
+          type: array
+          items: { type: string }
+        logo: { type: ["string", "null"] }
+        photos:
+          type: array
+          items: { type: string }
+        documents:
+          type: array
+          items: { type: string }
+        status: { type: string, enum: [pending, approved, rejected, blocked] }
+        reviewReason: { type: ["string", "null"] }
+        available: { type: boolean }
+        active: { type: boolean }
+        version: { type: integer }
+        createdAt: { type: string, format: date-time }
+    PartnerCompanyInput:
+      type: object
+      required: [name, type, phone, contact, address, city, area, hours, services]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 200 }
+        type: { type: string, enum: [towing, garage, both] }
+        phone: { type: string, minLength: 1, maxLength: 40 }
+        contact: { type: string, minLength: 1, maxLength: 200 }
+        address: { type: string, minLength: 1, maxLength: 500 }
+        city: { type: string, minLength: 1, maxLength: 120 }
+        area: { type: string, minLength: 1, maxLength: 120 }
+        hours: { type: string, minLength: 1, maxLength: 500 }
+        services:
+          type: array
+          items: { type: string, minLength: 1, maxLength: 120 }
+        expectedVersion: { type: integer, minimum: 0 }
+    PartnerAvailabilityInput:
+      type: object
+      required: [available, expectedVersion]
+      properties:
+        available: { type: boolean }
+        expectedVersion: { type: integer, minimum: 0 }
+    PartnerMember:
+      type: object
+      required: [id, companyId, userId, role, active, name]
+      properties:
+        id: { type: string }
+        companyId: { type: string }
+        userId: { type: string }
+        role: { type: string, enum: [owner, planner, worker] }
+        active: { type: boolean }
+        name: { type: string }
+    PartnerMemberInput:
+      type: object
+      required: [userId, role]
+      properties:
+        userId: { type: string, minLength: 1 }
+        role: { type: string, enum: [planner, worker] }
+    PartnerMemberUpdate:
+      type: object
+      required: [role, active]
+      properties:
+        role: { type: string, enum: [planner, worker] }
+        active: { type: boolean }
+    PartnerJob:
+      type: object
+      required: [id, companyId, requestId, service, location, destination, vehicleMake, vehiclePlate, customerName, customerPhone, notes, status, offeredAt, expiresAt, acceptedAt, updatedAt, version, workerId]
+      properties:
+        id: { type: string }
+        companyId: { type: string }
+        requestId: { type: string }
+        service: { type: string }
+        location: { type: string }
+        destination: { type: ["string", "null"] }
+        vehicleMake: { type: string }
+        vehiclePlate: { type: string }
+        customerName: { type: string }
+        customerPhone: { type: string }
+        notes: { type: string }
+        status: { type: string, enum: [offered, accepted, enroute, arrived, completed, unavailable, declined, expired] }
+        offeredAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+        acceptedAt: { type: ["string", "null"], format: date-time }
+        updatedAt: { type: string, format: date-time }
+        version: { type: integer }
+        workerId: { type: ["string", "null"] }
+    PartnerOfferResponse:
+      type: object
+      required: [decision, expectedVersion]
+      properties:
+        decision: { type: string, enum: [accept, decline] }
+        expectedVersion: { type: integer, minimum: 0 }
+    PartnerJobUpdate:
+      type: object
+      required: [status, expectedVersion]
+      properties:
+        status: { type: string, enum: [accepted, enroute, arrived, completed, unavailable] }
+        expectedVersion: { type: integer, minimum: 0 }
+        note: { type: string, maxLength: 1000 }
+        workerId: { type: string }
+    PartnerDeviceInput:
+      type: object
+      required: [token, platform]
+      properties:
+        token: { type: string, minLength: 1 }
+        platform: { type: string, enum: [ios, android] }
+    PartnerDeviceRemoval:
+      type: object
+      required: [token]
+      properties:
+        token: { type: string, minLength: 1 }
+    PartnerDeviceResult:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
+    PartnerCompanyReview:
+      type: object
+      required: [status, reason, expectedVersion]
+      properties:
+        status: { type: string, enum: [approved, rejected, blocked] }
+        reason: { type: string }
+        expectedVersion: { type: integer, minimum: 0 }
+    PartnerJobOffer:
+      type: object
+      required: [companyId, expectedUpdatedAt, expiresInSeconds]
+      properties:
+        companyId: { type: string, minLength: 1 }
+        expectedUpdatedAt: { type: string, format: date-time }
+        expiresInSeconds: { type: integer, minimum: 1 }
+    PartnerAudit:
+      type: object
+      required: [id, companyId, requestId, actorId, action, details, createdAt]
+      properties:
+        id: { type: string }
+        companyId: { type: ["string", "null"] }
+        requestId: { type: ["string", "null"] }
+        actorId: { type: string }
+        action: { type: string }
+        details: { type: string }
+        createdAt: { type: string, format: date-time }
+    PartnerUploadInput:
+      type: object
+      required: [filename, contentType, kind]
+      properties:
+        filename: { type: string, minLength: 1, maxLength: 255 }
+        contentType: { type: string, minLength: 1, maxLength: 200 }
+        kind: { type: string, enum: [logo, photo, document] }
+    PartnerUpload:
+      type: object
+      required: [uploadUrl, objectPath]
+      properties:
+        uploadUrl: { type: string, format: uri }
+        objectPath: { type: string }
+    PartnerUploadConfirmation:
+      type: object
+      required: [objectPath, kind]
+      properties:
+        objectPath: { type: string, minLength: 1 }
+        kind: { type: string, enum: [logo, photo, document] }
+    PartnerAsset:
+      type: object
+      required: [url]
+      properties:
+        url: { type: string, format: uri }
+    Membership:
+      type: object
+      required: [active, plan, billing, vehicleLimit, replacementTransport, garageChoice]
+      properties:
+        active: { type: boolean }
+        plan: { type: ["string", "null"], enum: [basic, premium, null] }
+        billing: { type: ["string", "null"], enum: [monthly, annual, null] }
+        vehicleLimit: { type: integer }
+        replacementTransport: { type: boolean }
+        garageChoice: { type: boolean }
+    BankMembershipConfirmation:
+      type: object
+      required: [userId, plan, billing, confirmedPayment]
+      properties:
+        userId: { type: string, minLength: 1, maxLength: 200 }
+        plan: { type: string, enum: [basic, premium] }
+        billing: { type: string, enum: [monthly, annual] }
+        confirmedPayment: { type: boolean, const: true }
+    VehicleInput:
+      type: object
+      required: [make, plate, electric]
+      properties:
+        make: { type: string, minLength: 1, maxLength: 120 }
+        plate: { type: string, minLength: 1, maxLength: 40 }
+        electric: { type: boolean }
+    RegisteredVehicle:
+      allOf:
+        - $ref: "#/components/schemas/VehicleInput"
+        - type: object
+          required: [id]
+          properties:
+            id: { type: string }
+    RoadsideRequestInput:
+      type: object
+      required: [vehicleId, service, location, replacementTransport]
+      properties:
+        vehicleId: { type: string, minLength: 1, maxLength: 200 }
+        service: { type: string, enum: [flat, battery, fuel, tow, lockout, ev, other] }
+        location: { type: string, minLength: 1, maxLength: 500, description: Trimmed before storage; whitespace-only values are rejected }
+        destination: { type: string, minLength: 1, maxLength: 300, description: Optional towing drop-off destination; allowed only for tow requests }
+        garage: { type: string, minLength: 1, maxLength: 200, description: Optional selected garage; allowed only for tow requests }
+        notes: { type: string, maxLength: 1000, default: "", description: Optional customer notes, trimmed before storage }
+        unsafe: { type: boolean, default: false }
+        replacementTransport: { type: boolean, default: false }
+        idempotencyKey: { type: string, format: uuid, description: Stable client-generated key used to make network retries safe }
+    RoadsideRequest:
+      type: object
+      required: [id, vehicleId, service, location, customerName, customerPhone, vehicleMake, vehiclePlate, notes, unsafe, replacementTransport, status, transportStatus, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        vehicleId: { type: string }
+        service: { type: string, enum: [flat, battery, fuel, tow, lockout, ev, other] }
+        location: { type: string }
+        destination: { type: string }
+        garage: { type: string }
+        customerName: { type: string }
+        customerPhone: { type: string }
+        vehicleMake: { type: string }
+        vehiclePlate: { type: string }
+        notes: { type: string }
+        unsafe: { type: boolean }
+        replacementTransport: { type: boolean }
+        status: { type: string, enum: [pending, offered, accepted, enroute, arrived, completed, unavailable] }
+        transportStatus: { type: string, enum: [not_requested, pending, confirmed, unavailable] }
+        operatorName: { type: string }
+        providerName: { type: string }
+        providerAcknowledgedAt: { type: string, format: date-time }
+        statusNote: { type: string }
+        recoveryReason: { type: string }
+        assignedToMe: { type: boolean, description: Present only in dispatch queue responses }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    DispatchUpdate:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [accepted, enroute, arrived, completed, unavailable] }
+        transportStatus: { type: string, enum: [pending, confirmed, unavailable] }
+        note: { type: string, maxLength: 500 }
+    ProviderOffer:
+      type: object
+      required: [providerId]
+      properties:
+        providerId: { type: string, minLength: 1 }
+    DispatchRecovery:
+      type: object
+      required: [reason, expectedUpdatedAt]
+      properties:
+        reason: { type: string, minLength: 1, maxLength: 500, description: Required explanation; trimmed before storage }
+        expectedUpdatedAt: { type: string, format: date-time, description: Updated-at revision last observed in the dispatch queue; prevents stale concurrent recovery actions }
+    ProviderReoffer:
+      type: object
+      required: [providerId, reason, expectedUpdatedAt]
+      properties:
+        providerId: { type: string, minLength: 1, maxLength: 200 }
+        reason: { type: string, minLength: 1, maxLength: 500 }
+        expectedUpdatedAt: { type: string, format: date-time }
+    ProviderResponse:
+      type: object
+      required: [accept]
+      properties:
+        accept: { type: boolean }
+    ProviderIdentity:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string }
+        name: { type: string }
+    DriverProfileInput:
+      type: object
+      required: [name, phone, vehicleMake, vehiclePlate, vehicleElectric, safetyContactName, safetyContactPhone, completed, language]
+      properties:
+        name: { type: string, maxLength: 120 }
+        phone: { type: string, maxLength: 40 }
+        vehicleMake: { type: string, maxLength: 120 }
+        vehiclePlate: { type: string, maxLength: 40 }
+        vehicleElectric: { type: boolean }
+        safetyContactName: { type: string, maxLength: 120 }
+        safetyContactPhone: { type: string, maxLength: 40 }
+        completed: { type: boolean }
+        language: { type: string, enum: [en, ar] }
+    DriverProfile:
+      allOf:
+        - $ref: "#/components/schemas/DriverProfileInput"
+      description: Driver-owned profile, empty until first saved
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    AssistantTurn:
+      type: object
+      required: [role, content]
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+          minLength: 1
+          maxLength: 1500
+    AssistantInput:
+      type: object
+      required: [language, page, messages]
+      properties:
+        language:
+          type: string
+          enum: [en, ar]
+        page:
+          type: string
+          maxLength: 100
+        messages:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: "#/components/schemas/AssistantTurn"
+    AssistantAnswer:
+      type: object
+      required: [reply]
+      properties:
+        reply:
+          type: string

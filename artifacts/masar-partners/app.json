@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "MASAR Partners",
+    "slug": "masar",
+    "owner": "ahmedobaji",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/masar-partners-icon.png",
+    "scheme": "masar-partners",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FBF6EA",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.masar.partners"
+    },
+    "android": {
+      "package": "com.masar.partners"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d1ee0716-2caf-4359-a257-ff38f83c3d8c"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/masar-partners-icon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "@clerk/expo",
+      "expo-secure-store",
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "MASAR Partners needs access to your photos to upload your company logo and photos."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
