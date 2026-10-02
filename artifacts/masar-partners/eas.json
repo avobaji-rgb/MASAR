@@ -5,10 +5,12 @@
       "environment": "preview",
       "credentialsSource": "remote",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "latest"
       },
       "ios": {
-        "simulator": false
+        "simulator": false,
+        "image": "latest"
       }
     }
   }

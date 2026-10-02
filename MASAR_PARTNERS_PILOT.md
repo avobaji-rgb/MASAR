@@ -68,9 +68,10 @@ Sleutels en credentials worden via de veilige configuratie-/secretsflow beheerd,
 
 ### Interne native buildvoorbereiding
 
-- `eas.json` bevat uitsluitend het profiel `preview`: interne distributie, preview-omgeving, remote signingcredentials, Android APK en fysieke iOS-build (geen simulator).
+- `eas.json` bevat uitsluitend het profiel `preview`: interne distributie, preview-omgeving, remote signingcredentials, Android APK en fysieke iOS-build (geen simulator). Beide platforms gebruiken expliciet de `latest` buildimage voor GitHub-builds.
 - De Expo-koppeling gaf geen builds terug voor het opgegeven project. Er zijn geen builds gestart of credentials aangemaakt/gecontroleerd.
-- De beschikbare Expo-buildfunctie vereist een aan het Expo-project gekoppelde GitHub-repository. Deze workspace heeft nog geen GitHub-remote; het juiste repository en de buildreferentie moeten worden vastgesteld voordat een build wordt gestart.
+- De gebruiker heeft openbare publicatie van de broncode goedgekeurd. De geselecteerde broncode staat op `https://github.com/avobaji-rgb/MASAR`, branch `main`, zonder secrets, uploads, agentbestanden of lokale Git-geschiedenis. De bestanden zijn na upload op inhoudshash gecontroleerd.
+- Koppel die repository via de GitHub-instellingen van `@ahmedobaji/masar` aan Expo. Gebruik `artifacts/masar-partners` als base directory, `main` als Git-referentie en `preview` als buildprofiel. Deze koppeling is nog niet gecontroleerd; de Expo-koppeling hier biedt geen functie om repositories te verbinden of signingcredentials in te stellen.
 - Voor een installeerbare interne iPhone-build zijn Apple Developer-signing en een geregistreerd testtoestel in het provisioningprofiel nodig. Android vereist signing en FCM; iOS vereist ook APNs voor push.
 - De centrale account-/API-koppeling ontbreekt nog. Een interne build alleen kan daarom geen geslaagde aanmelding, echte opdrachten of gesloten-app-push bewijzen.
 
